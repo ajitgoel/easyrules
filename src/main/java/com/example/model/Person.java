@@ -15,4 +15,5 @@ public class Person {
     private String focusArea;
     private int isClinicalJourney;
     private String userIntent;
+    private List<Zone> zones;
 } 

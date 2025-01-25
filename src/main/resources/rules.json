@@ -5,7 +5,8 @@
     "priority": 1,
     "condition": "person.focusArea == 'nutrition' && person.isClinicalJourney==0",
     "actions": [
-      "person.setUserIntent('nutrition-no-clinical-journey')"
+      "person.setUserIntent('nutrition-no-clinical-journey')",
+      "person.setZones([...])"
       ]
     },
   {
@@ -14,7 +15,8 @@
     "priority": 2,
     "condition": "(person.focusArea == 'sleep' || person.focusArea == 'mental-wellbeing') && person.isClinicalJourney==0",
     "actions": [
-      "person.setUserIntent('sleep-and-mental-wellbeing-no-clinical-journey')"
+      "person.setUserIntent('sleep-and-mental-wellbeing-no-clinical-journey')",
+      "person.setZones([...])"
     ]
   },
   {
@@ -23,7 +25,8 @@
     "priority": 3,
     "condition": "true",
     "actions": [
-      "person.setUserIntent('default')"
+      "person.setUserIntent('default')",
+      "person.setZones([...])"
   ]
   }
 ] 
