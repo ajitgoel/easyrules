@@ -1,20 +1,29 @@
 [
   {
-    "name": "adult rule",
-    "description": "Check if person is adult",
+    "name": "nutrition user focus area and not clinical journey user rule",
+    "description": "nutrition user focus area and not clinical journey user rule",
     "priority": 1,
-    "condition": "person.age >= 18",
+    "condition": "person.focusArea == 'nutrition' && person.isClinicalJourney==0",
     "actions": [
-      "person.setAdult(true)"
+      "person.setUserIntent('nutrition-no-clinical-journey')"
+      ]
+    },
+  {
+    "name": "sleep or mental-wellbeing user focus area and not clinical journey user rule",
+    "description": "sleep or mental-wellbeing user focus area and not clinical journey user rule",
+    "priority": 2,
+    "condition": "(person.focusArea == 'sleep' || person.focusArea == 'mental-wellbeing') && person.isClinicalJourney==0",
+    "actions": [
+      "person.setUserIntent('sleep-and-mental-wellbeing-no-clinical-journey')"
     ]
   },
   {
-    "name": "child rule",
-    "description": "Check if person is child",
-    "priority": 2,
-    "condition": "person.age < 18",
+    "name": "default rule",
+    "description": "default rule",
+    "priority": 3,
+    "condition": "true",
     "actions": [
-      "person.setAdult(false)"
-    ]
+      "person.setUserIntent('default')"
+  ]
   }
 ] 

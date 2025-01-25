@@ -12,7 +12,7 @@ import java.util.List;
 @ToString
 @Builder
 public class Person {
-    private String name;
-    private int age;
-    private boolean adult;
+    private String focusArea;
+    private int isClinicalJourney;
+    private String userIntent;
 } 
