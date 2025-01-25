@@ -1,0 +1,20 @@
+[
+  {
+    "name": "adult rule",
+    "description": "Check if person is adult",
+    "priority": 1,
+    "condition": "person.age >= 18",
+    "actions": [
+      "person.setAdult(true)"
+    ]
+  },
+  {
+    "name": "child rule",
+    "description": "Check if person is child",
+    "priority": 2,
+    "condition": "person.age < 18",
+    "actions": [
+      "person.setAdult(false)"
+    ]
+  }
+] 
