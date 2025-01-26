@@ -1,6 +1,9 @@
 package com.example.rules;
 
+import com.example.model.Person;
+import com.example.model.Zone;
 import org.apache.commons.jexl3.*;
+import org.apache.commons.jexl3.introspection.JexlMethod;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
@@ -16,7 +19,7 @@ public class JexlRule implements Rule {
     private final List<JexlExpression> actions;
     private final JexlEngine jexl;
 
-    public JexlRule(String name, String description, int priority, 
+    public JexlRule(String name, String description, int priority,
                     String condition, List<String> actions, JexlEngine jexl) {
         this.name = name;
         this.description = description;
@@ -44,25 +47,29 @@ public class JexlRule implements Rule {
 
     @Override
     public boolean evaluate(Facts facts) {
-        JexlContext context = new MapContext();
-        facts.asMap().forEach(context::set);
+        JexlContext context = createContext(facts);
         try {
             Object result = condition.evaluate(context);
             return result instanceof Boolean && (Boolean) result;
         } catch (Exception e) {
+            System.err.println("Error evaluating condition for rule " + name + ": " + e.getMessage());
             return false;
         }
     }
 
     @Override
     public void execute(Facts facts) throws Exception {
-        JexlContext context = new MapContext();
-        facts.asMap().forEach(context::set);
-        
+        JexlContext context = createContext(facts);
+
         for (JexlExpression action : actions) {
-            action.evaluate(context);
+            try {
+                action.evaluate(context);
+            } catch (Exception e) {
+                System.err.println("Error executing action for rule " + name + ": " + e.getMessage());
+                throw e;
+            }
         }
-        
+
         // Update the facts with any modified values
         for (Map.Entry<String, Object> entry : facts.asMap().entrySet()) {
             Object newValue = context.get(entry.getKey());
@@ -70,6 +77,44 @@ public class JexlRule implements Rule {
                 facts.put(entry.getKey(), newValue);
             }
         }
+    }
+
+    private JexlContext createContext(Facts facts) {
+        JexlContext context = new MapContext();
+        facts.asMap().forEach(context::set);
+
+        // Add custom functions
+        context.set("setZones", new JexlMethod() {
+            public Object invoke(Object obj, Object... args) {
+                if (obj instanceof Person && args.length == 1 && args[0] instanceof List) {
+                    ((Person) obj).setZones((List<Zone>) args[0]);
+                    return null;
+                }
+                throw new IllegalArgumentException("Invalid arguments for setZones");
+            }
+
+            @Override
+            public Object tryInvoke(String s, Object o, Object... objects) {
+                return null;
+            }
+
+            @Override
+            public boolean tryFailed(Object o) {
+                return false;
+            }
+
+            @Override
+            public boolean isCacheable() {
+                return false;
+            }
+
+            @Override
+            public Class<?> getReturnType() {
+                return null;
+            }
+        });
+
+        return context;
     }
 
     @Override
@@ -82,4 +127,4 @@ public class JexlRule implements Rule {
             return getName().compareTo(rule.getName());
         }
     }
-} 
+}

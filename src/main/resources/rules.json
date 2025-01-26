@@ -1,32 +1,26 @@
 [
   {
-    "name": "nutrition user focus area and not clinical journey user rule",
-    "description": "nutrition user focus area and not clinical journey user rule",
+    "id": "fitness_rule",
     "priority": 1,
-    "condition": "person.focusArea == 'nutrition' && person.isClinicalJourney==0",
-    "actions": [
-      "person.setUserIntent('nutrition-no-clinical-journey')",
-      "person.setZones([...])"
+    "condition": "age >= 18 && focusArea == 'fitness'",
+    "output": {
+      "userIntent": "fitness_tracking",
+      "zones": [
+        {"zoneKey": "gym_workouts", "zoneOrder": 1},
+        {"zoneKey": "nutrition_plan", "zoneOrder": 2}
       ]
-    },
-  {
-    "name": "sleep or mental-wellbeing user focus area and not clinical journey user rule",
-    "description": "sleep or mental-wellbeing user focus area and not clinical journey user rule",
-    "priority": 2,
-    "condition": "(person.focusArea == 'sleep' || person.focusArea == 'mental-wellbeing') && person.isClinicalJourney==0",
-    "actions": [
-      "person.setUserIntent('sleep-and-mental-wellbeing-no-clinical-journey')",
-      "person.setZones([...])"
-    ]
+    }
   },
   {
-    "name": "default rule",
-    "description": "default rule",
-    "priority": 3,
-    "condition": "true",
-    "actions": [
-      "person.setUserIntent('default')",
-      "person.setZones([...])"
-  ]
+    "id": "senior_health_rule",
+    "priority": 2,
+    "condition": "age >= 65 && healthConditions.contains('arthritis')",
+    "output": {
+      "userIntent": "senior_care",
+      "zones": [
+        {"zoneKey": "physical_therapy", "zoneOrder": 1},
+        {"zoneKey": "medication_tracker", "zoneOrder": 2}
+      ]
+    }
   }
-] 
+]

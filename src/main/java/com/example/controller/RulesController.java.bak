@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/rules")
-public class RulesController {
+public class RulesControllerOld {
     private final RulesService rulesService;
-    private static final Logger logger = LoggerFactory.getLogger(RulesController.class);
-    public RulesController(RulesService rulesService) {
+    private static final Logger logger = LoggerFactory.getLogger(RulesControllerOld.class);
+    public RulesControllerOld(RulesService rulesService) {
         this.rulesService = rulesService;
     }
 

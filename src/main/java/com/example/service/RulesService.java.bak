@@ -1,6 +1,8 @@
 package com.example.service;
 
 import com.example.model.RuleDefinition;
+import com.example.model.Person;
+import com.example.model.Zone;
 import com.example.rules.JexlRule;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RulesService {
@@ -27,12 +30,13 @@ public class RulesService {
         this.jexl = new JexlBuilder()
                 .strict(true)
                 .silent(false)
+                .namespaces(Map.of("Person", Person.class, "Zone", Zone.class))
                 .create();
     }
     @PostConstruct
     public void init() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream inputStream = new ClassPathResource("rules.json").getInputStream();
+        InputStream inputStream = new ClassPathResource("rules.json.bak").getInputStream();
         List<RuleDefinition> ruleDefinitions = mapper.readValue(inputStream, 
                 new TypeReference<List<RuleDefinition>>() {});
         Rules rules = new Rules();
