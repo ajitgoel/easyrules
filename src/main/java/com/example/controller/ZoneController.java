@@ -1,15 +1,10 @@
 package com.example.controller;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/zones")
+@RequestMapping("/api/{screen}/zones")
 public class ZoneController {
     private final RuleEngineService ruleEngine;
 
@@ -18,26 +13,10 @@ public class ZoneController {
     }
 
     @PostMapping
-    public ResponseEntity<RuleOutput> getZones(@RequestBody User user) {
-        return ResponseEntity.ok(ruleEngine.evaluateRules(user));
+    public ResponseEntity<RuleOutput> getZones(
+            @PathVariable String screen,
+            @RequestBody User user
+    ) {
+        return ResponseEntity.ok(ruleEngine.evaluateRules(user, screen));
     }
 }
-//@SpringBootTest
-//class RuleEngineApplicationTests {
-//    @Autowired
-//    RuleEngineService ruleEngine;
-//
-//    @Test
-//    void testFitnessRule() {
-//        User user = new User();
-//        user.setAge(25);
-//        user.setFocusArea("fitness");
-//        user.setHealthConditions(List.of());
-//
-//        RuleOutput output = ruleEngine.evaluateRules(user);
-//
-//        assertEquals("fitness_tracking", output.userIntent());
-//        assertTrue(output.zones().stream()
-//                .anyMatch(z -> z.zoneKey().equals("gym_workouts")));
-//    }
-//}

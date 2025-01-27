@@ -12,23 +12,29 @@ import java.util.List;
 public class RuleEngineService {
     private final RuleRepository ruleRepository;
     private final SpelExpressionParser parser = new SpelExpressionParser();
-
     public RuleEngineService(RuleRepository ruleRepository) {
         this.ruleRepository = ruleRepository;
     }
-
-    public RuleOutput evaluateRules(User user) {
-        return ruleRepository.getAllRules().stream()
+    public RuleOutput evaluateRules(User user, String screenName) {
+        return ruleRepository.getRulesForScreen(screenName).stream()
                 .filter(rule -> evaluateCondition(user, rule.condition()))
-                .max(Comparator.comparing(Rule::priority))
+                .findFirst()
                 .map(Rule::output)
-                .orElse(new RuleOutput("default_intent",
-                        List.of(new Zone("default_zone", 1))));
+                .orElseGet(() -> getDefaultOutput(screenName));
     }
 
+    private RuleOutput getDefaultOutput(String screenName) {
+        return switch(screenName) {
+            case "nutrition-health-home" -> new RuleOutput("nutrition_default",
+                    List.of(new Zone("basic_nutrition", 1)));
+            default -> new RuleOutput("default_intent",
+                    List.of(new Zone("default_zone", 1)));
+        };
+    }
     private boolean evaluateCondition(User user, String condition) {
         EvaluationContext context = new StandardEvaluationContext(user);
         return Boolean.TRUE.equals(parser.parseExpression(condition)
                 .getValue(context, Boolean.class));
     }
 }
+
