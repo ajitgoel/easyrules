@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.models.ruleEngine.zones;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public final class Rule {
+public final class ZonesRuleEngineRule {
     private String id;
     private int priority;
     private String condition;

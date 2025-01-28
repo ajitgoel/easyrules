@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.models.ruleEngine.zones;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
