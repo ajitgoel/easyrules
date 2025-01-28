@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Flux;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,10 +13,10 @@ public class ZoneController {
     }
 
     @PostMapping
-    public ResponseEntity<RuleOutput> getZones(
+    public Flux<ZonesRuleEngineOutput> getZones(
             @PathVariable String screen,
-            @RequestBody User user
+            @RequestBody ZonesRuleEngineInput user
     ) {
-        return ResponseEntity.ok(ruleEngine.evaluateRules(user, screen));
+        return ruleEngine.evaluateRules(user, screen);
     }
 }
