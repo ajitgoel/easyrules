@@ -1,5 +1,9 @@
 package com.example.controller;
 
+import com.example.models.ruleEngine.zones.Zone;
+import com.example.models.ruleEngine.zones.Input;
+import com.example.models.ruleEngine.zones.Output;
+import com.example.models.ruleEngine.zones.Rule;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import reactor.core.publisher.Flux;
@@ -20,29 +24,48 @@ public class RuleEngineService {
         this.ruleRepository = ruleRepository;
     }
 
-    public Flux<ZonesRuleEngineOutput> evaluateRules(ZonesRuleEngineInput user, String screenName) {
+    public Flux<Output> evaluateRules(Input user, String screenName) {
         return ruleRepository.getRulesForScreen(screenName)
                 .flatMapMany(rules -> Flux.fromIterable(rules)
                         .filterWhen(rule -> evaluateCondition(user, rule.getCondition()))
                         .sort(Comparator.comparingInt(Rule::getPriority))
                         .next()
                         .map(Rule::getOutput)
-                        .switchIfEmpty(Mono.just(getDefaultOutput(screenName))));
+                        .flatMap(output -> processZones(user, output))
+                        .switchIfEmpty(Mono.just(getDefaultOutput(screenName))
+                                .flatMap(defaultOutput -> processZones(user, defaultOutput)))
+                );
     }
 
-    private Mono<Boolean> evaluateCondition(ZonesRuleEngineInput user, String condition) {
+    private Mono<Boolean> evaluateCondition(Input user, String condition) {
         return Mono.fromCallable(() -> {
             EvaluationContext context = new StandardEvaluationContext(user);
             return Boolean.TRUE.equals(parser.parseExpression(condition)
-                .getValue(context, Boolean.class));
+                    .getValue(context, Boolean.class));
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private ZonesRuleEngineOutput getDefaultOutput(String screenName) {
+    private Mono<Output> processZones(Input user, Output output) {
+        return Flux.fromIterable(output.getZones())
+                .filterWhen(zone -> evaluateZoneCondition(user, zone))
+                .collectList()
+                .map(filteredZones -> new Output(output.getUserIntent(), filteredZones));
+    }
+
+    private Mono<Boolean> evaluateZoneCondition(Input user, Zone zone) {
+        String condition = zone.getCondition();
+        if (condition == null || condition.isEmpty()) {
+            return Mono.just(true);
+        } else {
+            return evaluateCondition(user, condition);
+        }
+    }
+
+    private Output getDefaultOutput(String screenName) {
         return switch(screenName) {
-            case "nutrition-health-home" -> new ZonesRuleEngineOutput("nutrition_default",
+            case "nutrition-health-home" -> new Output("nutrition_default",
                     List.of(Zone.builder().zoneKey("basic_health").zoneOrder(1).build()));
-            default -> new ZonesRuleEngineOutput("default_intent",
+            default -> new Output("default_intent",
                     List.of(Zone.builder().zoneKey("default_zone").zoneOrder(1).build()));
         };
     }

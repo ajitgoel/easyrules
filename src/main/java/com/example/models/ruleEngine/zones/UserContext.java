@@ -1,9 +1,9 @@
-package com.example.controller;
+package com.example.models.ruleEngine.zones;
 
 import lombok.Getter;
 
 @Getter
-public class UserContextZonesRuleEngineInput  {
+public class UserContext {
     private int isClinicalJourney;
     private String focusArea;
 }

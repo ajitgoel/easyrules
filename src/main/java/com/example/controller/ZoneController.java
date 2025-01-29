@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import com.example.models.ruleEngine.zones.Input;
+import com.example.models.ruleEngine.zones.Output;
 import reactor.core.publisher.Flux;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +15,9 @@ public class ZoneController {
     }
 
     @PostMapping
-    public Flux<ZonesRuleEngineOutput> getZones(
+    public Flux<Output> getZones(
             @PathVariable String screen,
-            @RequestBody ZonesRuleEngineInput user
+            @RequestBody Input user
     ) {
         return ruleEngine.evaluateRules(user, screen);
     }

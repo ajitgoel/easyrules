@@ -6,9 +6,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public final class ZonesRuleEngineRule {
+public final class Rule {
     private String id;
     private int priority;
     private String condition;
-    private ZonesRuleEngineOutput output;
+    private Output output;
 }

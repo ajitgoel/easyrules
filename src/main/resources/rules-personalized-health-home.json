@@ -2,11 +2,12 @@
   {
     "id": "nutrition-no-clinical-journey",
     "priority": 1,
-    "condition": "userContext.isClinicalJourney==0 && userContext.focusArea == 'nutrition'",
+    "condition": "userContext.focusArea == 'nutrition'",
     "output": {
       "userIntent": "nutrition-no-clinical-journey",
       "zones": [
         {"zoneKey": "nutrition", "zoneOrder": 1},
+        {"zoneKey": "medpearl", "zoneOrder": 1, "condition": "userContext.isClinicalJourney==1"},
         {"zoneKey": "activities", "zoneOrder": 2}
       ]
     }

@@ -1,7 +1,7 @@
-package com.example.controller;
+package com.example.models.ruleEngine.zones;
 
 import lombok.Getter;
 
 @Getter
-public class PageContextZonesRuleEngineInput {
+public class PageContext {
 }
